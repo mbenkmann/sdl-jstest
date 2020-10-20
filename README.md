@@ -9,6 +9,12 @@ their current button, axis, hat or ball state. sdl-jstest is
 especially useful if you want to test your `SDL_LINUX_JOYSTICK`
 configuration.
 
+.deb Package Build
+------------------
+
+From inside a git checkout:
+
+    make debian
 
 Requirements
 ------------
@@ -18,7 +24,7 @@ sdl-jstest requires the following packages to build:
 * cmake
 * libsdl1.2-dev
 * libsdl2-dev
-* libncurses5-dev
+* libncurses-dev
 
 
 Compilation

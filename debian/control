@@ -2,7 +2,7 @@ Source: sdl-jstest
 Section: utils
 Priority: extra
 Maintainer: Matthias S. Benkmann <matthias@winterdrache.de>
-Build-Depends: debhelper (>= 9), libsdl2-dev, cmake, libncurses-dev
+Build-Depends: debhelper (>= 9), libsdl2-dev, libsdl1.2-dev, cmake, libncurses-dev
 Standards-Version: 3.9.6
 Homepage: https://github.com/mbenkmann/sdl-jstest
 Vcs-Git: https://github.com/mbenkmann/sdl-jstest
