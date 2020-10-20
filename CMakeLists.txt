@@ -106,7 +106,7 @@ if(BUILD_SDL2_JSTEST)
   file(COPY sdl2-jstest.1
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-  file(COPY SDL_GameControllerDB/gamecontrollerdb.txt
+  file(COPY gamecontrollerdb.txt
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sdl2-jstest.1
