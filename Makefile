@@ -13,3 +13,7 @@ install: build/sdl2-jstest
 clean:
 	rm -rf build
 	rm -f *~ *.bak */*~ */*.bak
+
+.PHONY: debian
+debian:
+	dpkg-buildpackage -rfakeroot -sa -uc -us

@@ -1,3 +1,10 @@
+sdl-jstest (0.1.1-msb1) unstable; urgency=medium
+
+  * New Debian packaging
+  * New switch -x for sdl2-jstest to get a different output format
+
+ -- msb <msb@ninja>  Tue, 20 Oct 2020 15:33:10 +0200
+
 sdl-jstest (0.1.0-4) natty; urgency=low
 
   * New Ubuntu release

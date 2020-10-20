@@ -1,10 +1,12 @@
 Source: sdl-jstest
 Section: utils
 Priority: extra
-Maintainer: Ingo Ruhnke <grumbel@gmail.com>
-Build-Depends: debhelper (>= 7), libsdl2-dev, make, docbook2x
-Standards-Version: 3.8.0
-Homepage: svn://svn.berlios.de/windstille/trunk/sdl-jstest
+Maintainer: Matthias S. Benkmann <matthias@winterdrache.de>
+Build-Depends: debhelper (>= 9), libsdl2-dev, cmake, libncurses-dev
+Standards-Version: 3.9.6
+Homepage: https://github.com/mbenkmann/sdl-jstest
+Vcs-Git: https://github.com/mbenkmann/sdl-jstest
+Vcs-Browser: https://github.com/mbenkmann/sdl-jstest
 
 Package: sdl-jstest
 Architecture: any
