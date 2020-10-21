@@ -93,6 +93,7 @@ void print_help(const char* prg)
   printf("  --version              Print version number and exit\n");
   printf("  -l, --list             Search for available joysticks and list their properties\n");
   printf("  -t, --test JOYNUM      Display a graphical representation of the current joystick state\n");
+  printf("  -x, --xb360 JOYNUM     Like -t but display it mapped to an XBox360 controller\n");
   printf("  -g, --gamecontroller IDX\n"
          "                         Test GameController\n");
   printf("  -e, --event JOYNUM     Display the events that are received from the joystick\n");
@@ -134,7 +135,110 @@ void list_joysticks()
   }
 }
 
-void test_joystick(int joy_idx)
+void normal_view(int num_axes, Sint16* axes, int num_buttons, Uint8*  buttons) {
+        printw("Axes %2d:\n", num_axes);
+        for(int i = 0; i < num_axes; ++i)
+        {
+          int len = COLS - 20;
+          printw("  %2d: %6d  ", i, axes[i]);
+          print_bar((axes[i] + 32767) * (len-1) / 65534, len);
+          addch('\n');
+        }
+        printw("\n");
+
+        printw("Buttons %2d:\n", num_buttons);
+        for(int i = 0; i < num_buttons; ++i)
+        {
+          printw("  %2d: %d  %s\n", i, buttons[i], buttons[i] ? "[#]":"[ ]");
+        }
+        printw("\n");
+}
+
+char justify_buf[4][7];
+int jbidx = 0;
+const char* justify(Sint16 i) {
+  if (jbidx > 4) jbidx = 0;
+  int pad = 2;
+  if (i < 0) --pad;
+  if (i <= -1000) --pad;
+  if (i > 99) --pad;
+  if (i > 999) --pad;
+  justify_buf[jbidx][0] = ' ';
+  justify_buf[jbidx][1] = ' ';
+  snprintf(justify_buf[jbidx]+pad, sizeof(justify_buf[jbidx])-pad, "%d", i);
+  return justify_buf[jbidx++];  
+}
+
+void xb360_view(int num_axes, Sint16* axes, int num_buttons, Uint8*  buttons) {
+        int len = 10;
+        
+        const char* indent = "    ";
+        const char* space = "             ";
+        
+        printw("%s %-6s %s %-6s\n", indent, justify(axes[2]), space, justify(axes[5]));
+        printw("  ");
+        print_bar((axes[2] + 32767) * (len-1) / 65534, len);
+        printw("         ");
+        print_bar((axes[5] + 32767) * (len-1) / 65534, len);
+        addch('\n');
+        
+        addch('\n');
+        printw("%s  [%2s] %s   [%2s]\n", indent, buttons[4] ? "LB":"", space, buttons[5] ? "RB":"");
+        addch('\n');
+        
+        Sint16 up1    = axes[1];
+        if (up1 > 0) up1 = 0;
+        Sint16 down1  = axes[1];
+        if (down1 < 0) down1 = 0;
+        Sint16 left1  = axes[0];
+        if (left1 > 0) left1 = 0;
+        Sint16 right1 = axes[0];
+        if (right1 < 0) right1 = 0;
+        
+        Sint16 up2    = axes[4];
+        if (up2 > 0) up2 = 0;
+        Sint16 down2  = axes[4];
+        if (down2 < 0) down2 = 0;
+        Sint16 left2  = axes[3];
+        if (left2 > 0) left2 = 0;
+        Sint16 right2 = axes[3];
+        if (right2 < 0) right2 = 0;
+        
+        printw("%s  %-6s %s %-6s\n", indent, justify(up1), space, justify(up2));
+        printw("%6d %s %-6d    %6d %s %-6d\n", left1, buttons[9] ? "(#)": "( )", right1,
+                                             left2, buttons[10] ? "(#)": "( )", right2);
+        printw("%s  %-6s %s %-6s\n", indent, justify(down1), space, justify(down2));
+        addch('\n');
+        
+        
+        printw("           _\n");
+        printw("         /%s\\               (%s)   \n", buttons[8]?"\\ /":"   ", buttons[3]?"Y":" ");
+        printw(" [%s] (  %s  ) [%s]    (%s)   (%s)\n", buttons[6]?"BACK":"    ", buttons[8]?"X":" ", buttons[7]?"STRT":"    ", buttons[2]?"X":" ", buttons[1]?"B":" ");
+        printw("         \\%s/               (%s)   \n", buttons[8]?"/_\\":" _ ", buttons[0]?"A":" ");
+        
+        addch('\n');
+        addch('\n');
+        
+        printw("Axes %2d:\n", num_axes);
+        for(int i = 6; i < num_axes; ++i)
+        {
+          int len = COLS - 20;
+          printw("  %2d: %6d  ", i, axes[i]);
+          print_bar((axes[i] + 32767) * (len-1) / 65534, len);
+          addch('\n');
+        }
+        printw("\n");
+
+        printw("Buttons %2d:\n", num_buttons);
+        for(int i = 11; i < num_buttons; ++i)
+        {
+          printw("  %2d: %d  %s\n", i, buttons[i], buttons[i] ? "[#]":"[ ]");
+        }
+        printw("\n");
+}
+
+
+void test_joystick(int joy_idx, int view)
 {
   SDL_Joystick* joy = SDL_JoystickOpen(joy_idx);
   if (!joy)
@@ -155,6 +259,9 @@ void test_joystick(int joy_idx)
     int num_buttons = SDL_JoystickNumButtons(joy);
     int num_hats    = SDL_JoystickNumHats(joy);
     int num_balls   = SDL_JoystickNumBalls(joy);
+    
+    if (num_buttons < 11 || num_axes < 6)
+        view = 0;
 
     Sint16* axes    = calloc(num_axes,    sizeof(Sint16));
     Uint8*  buttons = calloc(num_buttons, sizeof(Uint8));
@@ -213,22 +320,10 @@ void test_joystick(int joy_idx)
         printw("Joystick Number: %d\n", joy_idx);
         printw("\n");
 
-        printw("Axes %2d:\n", num_axes);
-        for(int i = 0; i < num_axes; ++i)
-        {
-          int len = COLS - 20;
-          printw("  %2d: %6d  ", i, axes[i]);
-          print_bar((axes[i] + 32767) * (len-1) / 65534, len);
-          addch('\n');
-        }
-        printw("\n");
-
-        printw("Buttons %2d:\n", num_buttons);
-        for(int i = 0; i < num_buttons; ++i)
-        {
-          printw("  %2d: %d  %s\n", i, buttons[i], buttons[i] ? "[#]":"[ ]");
-        }
-        printw("\n");
+        if (view == 0)
+          normal_view(num_axes, axes, num_buttons, buttons);
+        else
+          xb360_view(num_axes, axes, num_buttons, buttons);
 
         printw("Hats %2d:\n", num_hats);
         for(int i = 0; i < num_hats; ++i)
@@ -626,7 +721,21 @@ int main(int argc, char** argv)
       }
       else
       {
-        test_joystick(joy_idx);
+        test_joystick(joy_idx, 0);
+      }
+    }
+    else if (argc == 3 && (strcmp(argv[1], "--xb360") == 0 ||
+                           strcmp(argv[1], "-x") == 0))
+    {
+      int joy_idx;
+      if (!str2int(argv[2], &joy_idx))
+      {
+        fprintf(stderr, "Error: JOYSTICKNUM argument must be a number, but was '%s'\n", argv[2]);
+        exit(1);
+      }
+      else
+      {
+        test_joystick(joy_idx, 1);
       }
     }
     else if (argc == 3 && (strcmp(argv[1], "--event") == 0 ||
