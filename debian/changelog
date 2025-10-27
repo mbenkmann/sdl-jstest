@@ -1,3 +1,9 @@
+sdl-jstest (0.1.2-msb1) UNRELEASED; urgency=medium
+
+  * quit when controller unplugged
+
+ -- Matthias S. Benkmann <msb@winterdrache.de>  Mon, 27 Oct 2025 11:49:52 +0100
+
 sdl-jstest (0.1.1-msb1) unstable; urgency=medium
 
   * New Debian packaging
