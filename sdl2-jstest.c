@@ -300,10 +300,16 @@ void test_joystick(int joy_idx, int view)
             balls[2*event.jball.ball + 0] = event.jball.xrel;
             balls[2*event.jball.ball + 1] = event.jball.yrel;
             break;
+          
+          case SDL_JOYDEVICEREMOVED:
+          case SDL_CONTROLLERDEVICEREMOVED:
+            quit = 1;
+            printf("Device removed, exiting\n");
+            break;
 
           case SDL_QUIT:
             quit = 1;
-            printf("Recieved interrupt, exiting\n");
+            printf("Received interrupt, exiting\n");
             break;
 
           default:
