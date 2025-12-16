@@ -1,4 +1,10 @@
-sdl-jstest (0.1.2-msb1) UNRELEASED; urgency=medium
+sdl-jstest (0.1.3-msb1) unstable; urgency=medium
+
+  * fix buffer overflow
+
+ -- Matthias S. Benkmann <msb@winterdrache.de>  Tue, 16 Dec 2025 21:05:50 +0100
+
+sdl-jstest (0.1.2-msb1) unstable; urgency=medium
 
   * quit when controller unplugged
 

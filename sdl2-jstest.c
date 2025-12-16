@@ -154,7 +154,7 @@ void normal_view(int num_axes, Sint16* axes, int num_buttons, Uint8*  buttons) {
         printw("\n");
 }
 
-char justify_buf[4][7];
+char justify_buf[5][7];
 int jbidx = 0;
 const char* justify(Sint16 i) {
   if (jbidx > 4) jbidx = 0;
